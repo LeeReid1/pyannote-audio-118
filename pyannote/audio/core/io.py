@@ -403,6 +403,12 @@ class Audio:
                 if not ("temp_cache" in file):
                     file["temp_cache"], _ = torchaudio.load(file["audio"])
                 data = file["temp_cache"][:, start_frame:end_frame]
+
+                # Fix last frame being wrong size 
+                curr_frames = len(data[0])
+                if curr_frames != num_frames:
+                    data = F.pad(data, pad=(0, num_frames - curr_frames))
+                
                 # ToDo - fix here later
                 # data, _ = torchaudio.load(
                 #     file["audio"], frame_offset=start_frame, num_frames=num_frames
